@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: httpd
+  template:
+    metadata:
+      labels:
+        app: httpd
+    spec:
+      containers:
+      - name: httpd
+        image: httpd:alpine
+        ports:
+        - containerPort: 80
+        env:
+        - name: APP_COLOR  # From ConfigMap
+          valueFrom:
+            configMapKeyRef:
+              name: httpd-config
+              key: APP_COLOR
+        - name: DB_PASSWORD  # From Secret
+          valueFrom:
+            secretKeyRef:
+              name: httpd-secret
+              key: DB_PASSWORD
